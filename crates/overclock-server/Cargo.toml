@@ -1,0 +1,15 @@
+[package]
+name = "overclock-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "REST API server for overclock-ai (Phase 2)"
+
+[dependencies]
+overclock-core = { path = "../overclock-core" }
+overclock-adapters = { path = "../overclock-adapters" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }

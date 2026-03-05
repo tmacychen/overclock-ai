@@ -1,0 +1,17 @@
+[package]
+name = "overclock-adapters"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "AI CLI tool adapters for overclock-ai"
+
+[dependencies]
+overclock-core = { path = "../overclock-core" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+async-trait = { workspace = true }
+futures = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }

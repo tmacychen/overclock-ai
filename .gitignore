@@ -1,0 +1,18 @@
+# Added by Rust
+/target
+
+# Added by Overclock-AI
+.overclock-ai/
+overclock-ai.toml
+templates/
+
+# Optional: IDEs and OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# Cargo.lock is usually committed for binaries, but we can keep it for now.
+# If you want to ignore it:
+# Cargo.lock
