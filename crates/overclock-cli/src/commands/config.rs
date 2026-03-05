@@ -12,7 +12,10 @@ fn load_config() -> Result<ProjectConfig> {
 pub async fn agents() -> Result<()> {
     let config = load_config()?;
     println!("🤖 Configured AI Agents:\n");
-    println!("{:<15} {:<15} {:<20} {:<10}", "ID", "Type", "Binary", "Free Tier");
+    println!(
+        "{:<15} {:<15} {:<20} {:<10}",
+        "ID", "Type", "Binary", "Free Tier"
+    );
     println!("{}", "-".repeat(60));
     for (id, agent) in &config.agents {
         println!(
@@ -30,7 +33,10 @@ pub async fn agents() -> Result<()> {
 pub async fn roles() -> Result<()> {
     let config = load_config()?;
     println!("🎭 Configured Roles:\n");
-    println!("{:<15} {:<20} {:<40}", "Role", "Default Agent", "Description");
+    println!(
+        "{:<15} {:<20} {:<40}",
+        "Role", "Default Agent", "Description"
+    );
     println!("{}", "-".repeat(75));
     for (name, role) in &config.roles {
         println!(

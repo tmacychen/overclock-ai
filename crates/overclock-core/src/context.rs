@@ -10,10 +10,10 @@
 //! Agents never see each other's raw sessions — they only see the
 //! orchestrator-curated shared context. This ensures clean handoffs.
 
-use serde::{Deserialize, Serialize};
-use std::path::{Path, PathBuf};
 use anyhow::Result;
 use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+use std::path::{Path, PathBuf};
 
 /// Represents the shared context that flows between all tasks.
 /// Stored in `.overclock-ai/context.json`.
@@ -114,7 +114,10 @@ impl SharedContext {
         if !self.architecture_decisions.is_empty() {
             parts.push("\n## Architecture Decisions".to_string());
             for d in &self.architecture_decisions {
-                parts.push(format!("### {}\n{}\n**Rationale**: {}", d.title, d.description, d.rationale));
+                parts.push(format!(
+                    "### {}\n{}\n**Rationale**: {}",
+                    d.title, d.description, d.rationale
+                ));
             }
         }
 

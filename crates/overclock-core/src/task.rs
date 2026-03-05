@@ -12,6 +12,16 @@ use uuid::Uuid;
 /// Unique identifier for a task.
 pub type TaskId = Uuid;
 
+/// A structured requirement that the AI agent must collect evidence for
+/// before the task can be considered complete.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ValidationRequirement {
+    pub required: bool,
+    pub format: String,
+    pub description: String,
+    pub must_include: Vec<String>,
+}
+
 /// Result produced by a completed task.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TaskResult {
@@ -41,6 +51,9 @@ pub enum TaskStatus {
         agent_id: String,
         started_at: DateTime<Utc>,
     },
+    /// Task has returned artifacts, the Orchestrator is verifying the output
+    /// against `ValidationRequirement`s before marking as completed.
+    Validating { agent_id: String },
     /// Task is completed, waiting for review by another agent.
     AwaitingReview {
         reviewer_agent_id: String,
@@ -51,10 +64,10 @@ pub enum TaskStatus {
         completed_at: DateTime<Utc>,
         result: TaskResult,
     },
-    /// Task failed.
-    Failed {
-        failed_at: DateTime<Utc>,
-        error: String,
+    /// Task could not be completed even after automatic retries.
+    Blocked {
+        blocked_at: DateTime<Utc>,
+        reason: String,
     },
 }
 
@@ -80,11 +93,31 @@ pub struct Task {
     pub extra_context: Vec<String>,
     /// When the task was created.
     pub created_at: DateTime<Utc>,
+    /// Structured evidence verification format requirements
+    #[serde(default)]
+    pub validation_requirements: Vec<ValidationRequirement>,
+    /// Array of completion criteria to be verified
+    #[serde(default)]
+    pub completion_criteria: Vec<String>,
+    /// Number of times the task has failed and been automatically retried (Harness feature).
+    #[serde(default)]
+    pub retry_count: u32,
+    /// Maximum number of automated retries before marking the task Blocked.
+    #[serde(default = "default_max_retries")]
+    pub max_retries: u32,
+}
+
+fn default_max_retries() -> u32 {
+    3
 }
 
 impl Task {
     /// Create a new task in Pending status.
-    pub fn new(title: impl Into<String>, description: impl Into<String>, role: impl Into<String>) -> Self {
+    pub fn new(
+        title: impl Into<String>,
+        description: impl Into<String>,
+        role: impl Into<String>,
+    ) -> Self {
         Self {
             id: Uuid::new_v4(),
             title: title.into(),
@@ -95,6 +128,10 @@ impl Task {
             dependencies: Vec::new(),
             extra_context: Vec::new(),
             created_at: Utc::now(),
+            validation_requirements: Vec::new(),
+            completion_criteria: Vec::new(),
+            retry_count: 0,
+            max_retries: 3,
         }
     }
 
@@ -105,6 +142,9 @@ impl Task {
 
     /// Check if the task is in a terminal state.
     pub fn is_terminal(&self) -> bool {
-        matches!(self.status, TaskStatus::Completed { .. } | TaskStatus::Failed { .. })
+        matches!(
+            self.status,
+            TaskStatus::Completed { .. } | TaskStatus::Blocked { .. }
+        )
     }
 }

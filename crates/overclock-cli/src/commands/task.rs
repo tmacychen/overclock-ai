@@ -61,19 +61,26 @@ pub async fn list() -> Result<()> {
     tasks.sort_by_key(|t| t.created_at);
 
     println!("📋 Tasks ({} total):\n", tasks.len());
-    println!("{:<38} {:<30} {:<12} {:<10}", "ID", "Title", "Role", "Status");
+    println!(
+        "{:<38} {:<30} {:<12} {:<10}",
+        "ID", "Title", "Role", "Status"
+    );
     println!("{}", "-".repeat(90));
     for task in &tasks {
         let status = match &task.status {
             overclock_core::task::TaskStatus::Pending => "⏳ Pending",
             overclock_core::task::TaskStatus::Assigned { .. } => "📌 Assigned",
             overclock_core::task::TaskStatus::Running { .. } => "🔄 Running",
+            overclock_core::task::TaskStatus::Validating { .. } => "⏳ Validating",
             overclock_core::task::TaskStatus::AwaitingReview { .. } => "👀 Review",
             overclock_core::task::TaskStatus::Completed { .. } => "✅ Done",
-            overclock_core::task::TaskStatus::Failed { .. } => "❌ Failed",
+            overclock_core::task::TaskStatus::Blocked { .. } => "❌ Blocked",
         };
         let title: String = task.title.chars().take(28).collect();
-        println!("{:<38} {:<30} {:<12} {:<10}", task.id, title, task.role, status);
+        println!(
+            "{:<38} {:<30} {:<12} {:<10}",
+            task.id, title, task.role, status
+        );
     }
 
     Ok(())

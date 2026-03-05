@@ -69,12 +69,12 @@ pub trait AgentAdapter: Send + Sync {
 | 上下文注入 | Prompt 前置拼接 |
 | 输出解析 | stdout 原文 |
 
-### Trae Agent (`trae.rs`)
+### Gemini CLI (`gemini.rs`)
 
 | 属性 | 值 |
 |------|-----|
-| CLI 命令 | `trae-cli run <prompt>` |
-| 健康检查 | `trae-cli --version` |
+| CLI 命令 | `gemini run <prompt>` |
+| 健康检查 | `gemini --version` |
 | 上下文注入 | Prompt 前置拼接 |
 | 输出解析 | stdout 原文 |
 

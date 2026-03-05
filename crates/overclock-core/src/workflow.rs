@@ -9,8 +9,8 @@
 //! 3. Downstream tasks receive upstream results as context
 //! 4. Agents never communicate directly — all routing goes through the orchestrator
 
-use serde::{Deserialize, Serialize};
 use crate::task::{Task, TaskId};
+use serde::{Deserialize, Serialize};
 
 /// A step in a workflow, referencing a task configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -54,7 +54,8 @@ impl Workflow {
     /// Returns tasks in dependency-respecting order.
     pub fn generate_tasks(&self) -> Vec<Task> {
         let mut tasks: Vec<Task> = Vec::new();
-        let mut name_to_id: std::collections::HashMap<String, TaskId> = std::collections::HashMap::new();
+        let mut name_to_id: std::collections::HashMap<String, TaskId> =
+            std::collections::HashMap::new();
 
         for step in &self.steps {
             let mut task = Task::new(&step.name, &step.description, &step.role);

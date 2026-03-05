@@ -43,7 +43,9 @@ graph TB
         TaskEngine["Task & Workflow Engine"]
         RoleManager["Role Manager"]
         Scheduler["Scheduler / Dispatcher"]
-        ContextBroker["Context Broker"]
+        ContextBroker["Context Broker<br/>(含上下文压缩)"]
+        RecoverySystem["Error Recovery & Validation"]
+        Telemetry["Telemetry & Data Collection"]
     end
 
     subgraph "Adapter Layer"
@@ -76,12 +78,14 @@ graph TB
 
 | 模块 | 职责 |
 |------|------|
-| `task.rs` | 任务数据模型，生命周期状态机 (Pending → Assigned → Running → Completed/Failed) |
+| `task.rs` | 任务数据模型，状态机 (Pending → Running → Validating → Completed/Blocked)，包含重试阈值与验证标准 (`validation_requirements`) |
 | `role.rs` | 角色定义 (Architect/Reviewer/Developer/Tester/Custom)，角色-Agent 绑定 |
 | `workflow.rs` | DAG 工作流引擎，支持串行/并行/条件分支，内置预设模板 |
-| `context.rs` | 共享上下文协议，`.overclock-ai/context.json` 为唯一事实来源 |
+| `context.rs` | 共享上下文协议，包含动态上下文压缩能力，`.overclock-ai/context.json` 为唯一事实来源 |
 | `event.rs` | 事件总线 (tokio broadcast)，支持 UI 层实时订阅 |
 | `config.rs` | 项目配置管理，读写 `overclock-ai.toml` |
+| `telemetry.rs`| **[新增设计]** 数据收集模块，记录执行指标、上下文使用率与失败原因，本地落盘 |
+| `recovery.rs` | **[新增设计]** 异常恢复控制流，拦截 CLI Agent 返回的错误，基于问题分类自动决定是重试上下文还是标记异常 |
 
 ### Layer 2: Adapter Layer (`overclock-adapters`)
 

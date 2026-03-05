@@ -3,9 +3,9 @@
 //! Events are emitted by the orchestrator and adapters during task execution.
 //! The CLI's TUI monitor and future Web UI subscribe to these events.
 
+use crate::task::TaskId;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use crate::task::TaskId;
 
 /// Events emitted during orchestration.
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -1,0 +1,156 @@
+[
+  {
+    "id": "F-HARNESS-01",
+    "category": "core",
+    "core": true,
+    "description": "Implement Agent Harness Validation & Recovery Models",
+    "priority": "high",
+    "status": "completed",
+    "dependencies": [],
+    "retry_count": 0,
+    "max_retries": 3,
+    "escalation": {
+      "trigger": "retry_count >= max_retries",
+      "action": "Mark as blocked"
+    },
+    "steps": [
+      "Review ai-driven-dev-spec and align concepts",
+      "Update roadmap.md and architecture.md with Harness Phase 1.5",
+      "Refactor Task struct to include ValidationRequirement",
+      "Add Blocked and Validating enum statuses to TaskStatus"
+    ],
+    "test_cases": [
+      {
+        "id": "test-harness-01",
+        "description": "cargo check passes with new Task model",
+        "type": "unit",
+        "steps": [
+          "Run: cargo check"
+        ],
+        "status": "passed"
+      }
+    ],
+    "validation_requirements": {
+      "test_evidence": {
+        "required": true,
+        "format": "terminal_output",
+        "must_include": [
+          "Finished `dev` profile"
+        ],
+        "description": "Rust compilation successfully verifies the model"
+      }
+    },
+    "completion_criteria": [
+      "Task struct updated",
+      "cargo check passes",
+      "Documentation reflects Phase 1.5"
+    ],
+    "security_checks": [],
+    "acceptance_criteria": [
+      "Core engine is ready for logic implementation of validation and recovery"
+    ],
+    "estimated_complexity": "medium",
+    "estimated_effort": "2h",
+    "actual_time_spent": "2h",
+    "passes": true,
+    "last_worked_on": "2026-03-05",
+    "notes": "Completed basic tracking modeling"
+  },
+  {
+    "id": "F-HARNESS-02",
+    "category": "core",
+    "core": true,
+    "description": "Create Telemetry and Error Recovery subsystems",
+    "priority": "high",
+    "status": "completed",
+    "dependencies": [
+      "F-HARNESS-01"
+    ],
+    "retry_count": 0,
+    "max_retries": 1,
+    "steps": [
+      "Create `recovery.rs` with error classification logic",
+      "Create bounds for Retry and Block behaviors",
+      "Create `telemetry.rs` for tracking task duration and successes"
+    ],
+    "test_cases": [
+      {
+        "id": "test-harness-02",
+        "description": "cargo check passes with telemetry & recovery module",
+        "type": "unit",
+        "steps": [
+          "Run: cargo check"
+        ],
+        "status": "passed"
+      }
+    ],
+    "validation_requirements": {
+      "test_evidence": {
+        "required": true,
+        "format": "terminal_output",
+        "must_include": [
+          "Finished `dev` profile"
+        ],
+        "description": "Rust compilation successfully verifies the module"
+      }
+    },
+    "completion_criteria": [
+      "telemetry.rs and recovery.rs exist",
+      "Modules exported in core lib",
+      "cargo passes"
+    ],
+    "estimated_effort": "2h",
+    "actual_time_spent": "1h",
+    "passes": true
+  },
+  {
+    "id": "F-HARNESS-03",
+    "category": "core",
+    "core": true,
+    "description": "Integrate Telemetry and Recovery into Orchestrator CLI",
+    "priority": "high",
+    "status": "completed",
+    "dependencies": [
+      "F-HARNESS-02"
+    ],
+    "retry_count": 0,
+    "max_retries": 1,
+    "steps": [
+      "Wrap execute_task with loop inside commands/run.rs",
+      "Intercept errors to use classify_error",
+      "Execute RecoveryAction paths (delay/retry/script)",
+      "Append TelemetryRecords to jsonl on task completion or failure"
+    ],
+    "completion_criteria": [
+      "run_task incorporates a retry loop",
+      ".overclock-ai/telemetry/telemetry.jsonl is successfully written to",
+      "cargo check passes"
+    ],
+    "actual_time_spent": "1h"
+  },
+  {
+    "id": "F-ADAPTERS-01",
+    "category": "adapters",
+    "core": false,
+    "description": "Remove Trae CLI and integrate Gemini CLI",
+    "priority": "high",
+    "status": "completed",
+    "dependencies": [],
+    "retry_count": 0,
+    "max_retries": 1,
+    "steps": [
+      "Delete trae.rs",
+      "Draft gemini.rs using Gemini CLI interface",
+      "Swap registry matching in run.rs and status.rs",
+      "Update documentation references"
+    ],
+    "completion_criteria": [
+      "No trae traces in codebase",
+      "gemini adapter handles health check and execute_task",
+      "cargo check passes"
+    ],
+    "estimated_effort": "0.5h",
+    "actual_time_spent": "0.5h",
+    "passes": true
+  }
+]

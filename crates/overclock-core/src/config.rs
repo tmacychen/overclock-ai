@@ -5,10 +5,10 @@
 //! - Role-to-agent bindings
 //! - Project metadata
 
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::Path;
-use anyhow::Result;
 
 use crate::role::RoleConfig;
 
@@ -99,56 +99,80 @@ impl ProjectConfig {
     /// Generate a default configuration.
     pub fn default_config(project_name: &str) -> Self {
         let mut agents = HashMap::new();
-        agents.insert("codebuddy".into(), AgentConfig {
-            agent_type: "codebuddy".into(),
-            // Use specific path to avoid conflict with CodeBuddy IDE
-            binary: Some("/opt/homebrew/lib/node_modules/@tencent-ai/codebuddy-code/bin/codebuddy".into()),
-            free_tier: true,
-            default_model: None,
-            api_key_env: None,
-            provider: None,
-            mode: "cli".into(),
-        });
-        agents.insert("kiro".into(), AgentConfig {
-            agent_type: "kiro-cli".into(),
-            binary: Some("kiro-cli".into()),
-            free_tier: true,
-            default_model: None,
-            api_key_env: None,
-            provider: None,
-            mode: "cli".into(),
-        });
-        agents.insert("trae".into(), AgentConfig {
-            agent_type: "trae-agent".into(),
-            binary: Some("trae-cli".into()),
-            free_tier: true,
-            default_model: None,
-            api_key_env: None,
-            provider: None,
-            mode: "cli".into(),
-        });
+        agents.insert(
+            "codebuddy".into(),
+            AgentConfig {
+                agent_type: "codebuddy".into(),
+                // Use specific path to avoid conflict with CodeBuddy IDE
+                binary: Some(
+                    "/opt/homebrew/lib/node_modules/@tencent-ai/codebuddy-code/bin/codebuddy"
+                        .into(),
+                ),
+                free_tier: true,
+                default_model: None,
+                api_key_env: None,
+                provider: None,
+                mode: "cli".into(),
+            },
+        );
+        agents.insert(
+            "kiro".into(),
+            AgentConfig {
+                agent_type: "kiro-cli".into(),
+                binary: Some("kiro-cli".into()),
+                free_tier: true,
+                default_model: None,
+                api_key_env: None,
+                provider: None,
+                mode: "cli".into(),
+            },
+        );
+        agents.insert(
+            "trae".into(),
+            AgentConfig {
+                agent_type: "trae-agent".into(),
+                binary: Some("trae-cli".into()),
+                free_tier: true,
+                default_model: None,
+                api_key_env: None,
+                provider: None,
+                mode: "cli".into(),
+            },
+        );
 
         let mut roles = HashMap::new();
-        roles.insert("architect".into(), RoleConfig {
-            description: "项目架构设计和技术调研".into(),
-            default_agent: "codebuddy".into(),
-            prompt_template: Some("architect.md".into()),
-        });
-        roles.insert("reviewer".into(), RoleConfig {
-            description: "审查代码和架构方案，提出改进建议".into(),
-            default_agent: "kiro".into(),
-            prompt_template: Some("reviewer.md".into()),
-        });
-        roles.insert("developer".into(), RoleConfig {
-            description: "编码实现".into(),
-            default_agent: "trae".into(),
-            prompt_template: Some("developer.md".into()),
-        });
-        roles.insert("tester".into(), RoleConfig {
-            description: "编写和执行测试".into(),
-            default_agent: "codebuddy".into(),
-            prompt_template: Some("tester.md".into()),
-        });
+        roles.insert(
+            "architect".into(),
+            RoleConfig {
+                description: "项目架构设计和技术调研".into(),
+                default_agent: "codebuddy".into(),
+                prompt_template: Some("architect.md".into()),
+            },
+        );
+        roles.insert(
+            "reviewer".into(),
+            RoleConfig {
+                description: "审查代码和架构方案，提出改进建议".into(),
+                default_agent: "kiro".into(),
+                prompt_template: Some("reviewer.md".into()),
+            },
+        );
+        roles.insert(
+            "developer".into(),
+            RoleConfig {
+                description: "编码实现".into(),
+                default_agent: "trae".into(),
+                prompt_template: Some("developer.md".into()),
+            },
+        );
+        roles.insert(
+            "tester".into(),
+            RoleConfig {
+                description: "编写和执行测试".into(),
+                default_agent: "codebuddy".into(),
+                prompt_template: Some("tester.md".into()),
+            },
+        );
 
         ProjectConfig {
             project: ProjectMeta {

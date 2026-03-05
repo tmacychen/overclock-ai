@@ -16,6 +16,8 @@
 pub mod config;
 pub mod context;
 pub mod event;
+pub mod recovery;
 pub mod role;
 pub mod task;
+pub mod telemetry;
 pub mod workflow;

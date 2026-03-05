@@ -2,7 +2,7 @@
 
 use anyhow::Result;
 use overclock_core::config::ProjectConfig;
-use overclock_core::context::{SharedContext, CONTEXT_DIR};
+use overclock_core::context::{CONTEXT_DIR, SharedContext};
 use std::path::PathBuf;
 use tracing::info;
 

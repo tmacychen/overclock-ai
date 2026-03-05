@@ -19,8 +19,8 @@
 
 pub mod adapter_trait;
 pub mod codebuddy;
-pub mod kiro;
-pub mod trae;
 pub mod custom_api;
+pub mod gemini;
+pub mod kiro;
 
 pub use adapter_trait::{AgentAdapter, HealthStatus, TaskOutput};

@@ -1,11 +1,11 @@
 //! `overclock-ai status` command — check health of all configured agents.
 
 use anyhow::Result;
-use overclock_core::config::ProjectConfig;
 use overclock_adapters::adapter_trait::AgentAdapter;
 use overclock_adapters::codebuddy::CodeBuddyAdapter;
+use overclock_adapters::gemini::GeminiAdapter;
 use overclock_adapters::kiro::KiroAdapter;
-use overclock_adapters::trae::TraeAdapter;
+use overclock_core::config::ProjectConfig;
 
 /// Check health status of all configured agents.
 pub async fn run() -> Result<()> {
@@ -13,14 +13,17 @@ pub async fn run() -> Result<()> {
     let config = ProjectConfig::load(&workspace)?;
 
     println!("🔍 Checking AI CLI agent status...\n");
-    println!("{:<15} {:<15} {:<15} {:<40}", "Agent ID", "Type", "Status", "Details");
+    println!(
+        "{:<15} {:<15} {:<15} {:<40}",
+        "Agent ID", "Type", "Status", "Details"
+    );
     println!("{}", "-".repeat(85));
 
     for (id, agent_config) in &config.agents {
         let adapter: Box<dyn AgentAdapter> = match agent_config.agent_type.as_str() {
             "codebuddy" => Box::new(CodeBuddyAdapter::new()),
             "kiro-cli" => Box::new(KiroAdapter::new()),
-            "trae-agent" => Box::new(TraeAdapter::new()),
+            "gemini-cli" => Box::new(GeminiAdapter::new()),
             _ => {
                 println!(
                     "{:<15} {:<15} {:<15} {:<40}",

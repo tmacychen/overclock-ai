@@ -8,9 +8,13 @@
 |------|------|---------|---------|---------|
 | **CodeBuddy** | Tencent | `codebuddy` | `npm install -g @tencent-ai/codebuddy-code` | 100K tokens/月 |
 | **Kiro CLI** | AWS | `kiro-cli` | `curl -fsSL https://cli.kiro.dev/install \| bash` | 50 credits/月 (永久) |
-| **Trae Agent** | ByteDance | `trae-cli` | 开源 (GitHub) | 完全免费 (需配 LLM Key) |
+| **Gemini CLI** | Google | `gemini` | `npm install -g @google/gemini-cli` | 免费额度依 API Key 而定 |
 
-> 扩展计划：后续添加 Claude Code、Gemini CLI、Qwen Code CLI、Lingma 等适配器。
+> 扩展计划：后续添加 Claude Code、Qwen Code CLI、Lingma 等适配器。
+
+### Phase 1 核心功能与可靠性 (从纯编排走向 Harness)
+
+我们将引入基于 Anthropic 最佳实践的 "Agent Harness" 理念，增加数据收集与严格验证，将系统从单纯的 "Toolbox" 升级为长周期可靠运行的体系。
 
 ### 实现步骤
 
@@ -19,11 +23,20 @@
 | 1.1 | 项目脚手架 (Rust workspace) | ✅ 已完成 |
 | 1.2 | Core 数据模型 (task, role, workflow, context, event, config) | ✅ 已完成 |
 | 1.3 | 适配器 Trait + CodeBuddy 适配器 | ✅ 已完成 |
-| 1.4 | Kiro CLI + Trae Agent 适配器 | ✅ 已完成 |
+| 1.4 | Kiro CLI + Gemini CLI 适配器 | ✅ 已完成 |
 | 1.5 | CLI 命令行 (init, config, task, run, status) | ✅ 已完成 |
 | 1.6 | 上下文同步机制 | ✅ 基础完成 |
-| 1.7 | TUI Monitor (终端实时监控) | 🔲 待实现 |
-| 1.8 | 集成测试 + 文档 | 🔲 待实现 |
+| 1.7 | Agent Harness (证据驱动验证、重试控制、上下文压缩) | 🔲 待实现 |
+| 1.8 | Telemetry & Data Collection (失败分析与性能收集) | 🔲 待实现 |
+| 1.9 | TUI Monitor (终端实时监控) | 🔲 待实现 |
+| 1.10 | 集成测试 + 文档 | 🔲 待实现 |
+
+### 里程碑补充 (Harness & Reliability 集成)
+由于长期自动化执行的需要，将在 Phase 1 加入以下关键能力：
+1. **证据驱动验证**：所有任务完成前，必须向 Orchestrator 出具结构化证据（测试输出日志等），禁止简单的自行标注完成。
+2. **自动化错误恢复**：建立问题分类模型（例如环境问题、依赖错误、代码等）。Orchestrator 能够重试调用或自动回退状态，减少人类干预。
+3. **闭环的数据收集**：系统捕获所有任务的执行失败原因、使用的上下文字段，建立内置指标并存放到本地，服务于长期的规范升级与微调。
+
 
 ### 已验证
 
