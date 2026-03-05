@@ -75,7 +75,7 @@ async fn run_task(
     use std::time::Instant;
 
     let start_time = Instant::now();
-    let mut sink = TelemetrySink::new();
+    let mut sink = TelemetrySink::new(workspace);
 
     loop {
         // Update task status to Running.
@@ -237,17 +237,18 @@ async fn run_task(
         }
     }
 
-    // Append telemetry jsonl
-    if let Ok(jsonl_line) = serde_json::to_string(&sink.records) {
-        let telemetry_dir = workspace.join(CONTEXT_DIR).join("telemetry");
-        std::fs::create_dir_all(&telemetry_dir)?;
-        let mut file = std::fs::OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(telemetry_dir.join("telemetry.jsonl"))?;
-        use std::io::Write;
-        writeln!(file, "{}", jsonl_line)?;
+    // Flush telemetry data to disk
+    if let Err(e) = sink.flush() {
+        println!("⚠️  Failed to flush telemetry data: {e}");
     }
+
+    // Generate and save metrics report
+    let metrics_report = sink.generate_metrics_report();
+    let reports_dir = workspace.join(CONTEXT_DIR).join("reports");
+    std::fs::create_dir_all(&reports_dir)?;
+    let report_path = reports_dir.join(format!("metrics-{}.md", Utc::now().format("%Y-%m-%d-%H-%M-%S")));
+    std::fs::write(&report_path, metrics_report)?;
+    println!("📊 Metrics report saved to: {}", report_path.display());
 
     Ok(())
 }
