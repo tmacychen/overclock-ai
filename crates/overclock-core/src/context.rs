@@ -107,6 +107,24 @@ impl SharedContext {
     /// Build a prompt context string that can be injected into any agent.
     /// This is the unified context representation that all adapters use.
     pub fn to_prompt_context(&self) -> String {
+        self.to_prompt_context_with_limit(None)
+    }
+
+    /// Build a prompt context string with a maximum length limit.
+    /// If the limit is exceeded, the context will be compressed using priority-based rules.
+    pub fn to_prompt_context_with_limit(&self, max_length: Option<usize>) -> String {
+        let full_context = self.build_full_context();
+        
+        match max_length {
+            Some(limit) if full_context.len() > limit => {
+                self.compress_context(full_context, limit)
+            }
+            _ => full_context,
+        }
+    }
+
+    /// Build the full context without any compression.
+    fn build_full_context(&self) -> String {
         let mut parts = Vec::new();
 
         parts.push(format!("# Project Context\n\n{}", self.project_brief));
@@ -145,5 +163,85 @@ impl SharedContext {
         }
 
         parts.join("\n")
+    }
+
+    /// Compress the context to fit within the specified limit using priority-based rules.
+    fn compress_context(&self, _full_context: String, max_length: usize) -> String {
+        // Priority order: Project brief > Architecture decisions > Code conventions > Task results (newest first)
+        
+        let mut parts = Vec::new();
+        
+        // Always include project brief
+        parts.push(format!("# Project Context\n\n{}", self.project_brief));
+        
+        // Include architecture decisions if space allows
+        if !self.architecture_decisions.is_empty() {
+            parts.push("\n## Architecture Decisions".to_string());
+            for d in &self.architecture_decisions {
+                let decision_str = format!(
+                    "### {}\n{}\n**Rationale**: {}",
+                    d.title, d.description, d.rationale
+                );
+                parts.push(decision_str);
+            }
+        }
+        
+        // Include code conventions if space allows
+        if !self.code_conventions.is_empty() {
+            parts.push("\n## Code Conventions".to_string());
+            for c in &self.code_conventions {
+                parts.push(format!("- {c}"));
+            }
+        }
+        
+        // Include task results (newest first) if space allows
+        if !self.task_results.is_empty() {
+            parts.push("\n## Previous Task Results".to_string());
+            
+            // Reverse to get newest first
+            let mut reversed_results = self.task_results.clone();
+            reversed_results.reverse();
+            
+            for r in reversed_results {
+                let task_str = format!(
+                    "### {} (by {} using {})\n{}",
+                    r.task_title, r.role, r.agent_id, r.summary
+                );
+                parts.push(task_str);
+                
+                if !r.artifact_paths.is_empty() {
+                    parts.push("Artifacts:".to_string());
+                    for a in &r.artifact_paths {
+                        parts.push(format!("- {}", a.display()));
+                    }
+                }
+                
+                // Check if we're getting close to the limit
+                let current_length = parts.join("\n").len();
+                if current_length > max_length * 9 / 10 { // 90% of limit
+                    break;
+                }
+            }
+        }
+        
+        let compressed = parts.join("\n");
+        
+        // If still too long, further compress by truncating summaries
+        if compressed.len() > max_length {
+            self.truncate_context(compressed, max_length)
+        } else {
+            compressed
+        }
+    }
+
+    /// Truncate the context to fit within the specified limit by truncating text.
+    fn truncate_context(&self, context: String, max_length: usize) -> String {
+        if context.len() <= max_length {
+            return context;
+        }
+        
+        // Truncate and add ellipsis
+        let truncated = context[..max_length - 3].to_string();
+        format!("{}\n... (context truncated due to length)", truncated)
     }
 }
