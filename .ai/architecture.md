@@ -6,10 +6,13 @@
 
 | Layer | Technology | Rationale |
 | :--- | :--- | :--- |
-| **Frontend** | *TBD* | *Fill in during initialization* |
-| **Backend** | *TBD* | |
-| **Database** | *TBD* | |
-| **Testing** | *TBD* | |
+| **Core Engine** | Rust (tokio async runtime) | 高性能、内存安全、并发处理能力强 |
+| **CLI** | clap 4 | 现代化的命令行接口框架 |
+| **Serialization** | serde + serde_json + toml | 灵活的序列化和反序列化 |
+| **Logging** | tracing + tracing-subscriber | 结构化日志记录 |
+| **REST API (Phase 2)** | Axum | 高性能的 Rust Web 框架 |
+| **Persistence** | 文件系统 JSON + SQLite (可选) | 简单可靠的持久化方案 |
+| **AI Adapters** | CodeBuddy, Kiro CLI, Gemini CLI | 多 AI 模型支持 |
 
 ## Directory Structure
 

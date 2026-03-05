@@ -7,7 +7,7 @@ Overclock-AI coordinates multiple AI CLI tools (CodeBuddy, Kiro CLI, Trae Agent,
 ## Key Features
 
 - **Role-based task assignment**: Architect, Reviewer, Developer, Tester
-- **Multi-CLI orchestration**: CodeBuddy, Kiro CLI, Trae Agent (free tier first!)
+- **Multi-CLI orchestration**: CodeBuddy, Kiro CLI, Gemini CLI (free tier first!)
 - **Shared context broker**: Agents are isolated but share curated context
 - **DAG workflow engine**: Design → Review → Develop → Test pipelines
 - **Extensible adapter system**: Add new AI CLI tools via plugin trait
@@ -23,7 +23,7 @@ Overclock-AI coordinates multiple AI CLI tools (CodeBuddy, Kiro CLI, Trae Agent,
            ┌─────────────────┼─────────────────┐
            │                 │                 │
     ┌──────▼──────┐  ┌──────▼──────┐  ┌──────▼──────┐
-    │  CodeBuddy  │  │  Kiro CLI   │  │ Trae Agent  │
+    │  CodeBuddy  │  │  Kiro CLI   │  │ Gemini CLI  │
     │  (isolated) │  │  (isolated) │  │  (isolated) │
     └─────────────┘  └─────────────┘  └─────────────┘
 ```
@@ -91,10 +91,16 @@ Install via curl:
 curl -fsSL https://cli.kiro.dev/install | bash
 ```
 
+### Gemini CLI
+Install via npm:
+```bash
+npm install -g @google/gemini-cli
+```
+
 ```
 crates/
-├── overclock-core/     # Core engine (task, role, workflow, context, event)
-├── overclock-adapters/ # AI CLI adapters (codebuddy, kiro, trae)
+├── overclock-core/     # Core engine (task, role, workflow, context, event, telemetry, recovery)
+├── overclock-adapters/ # AI CLI adapters (codebuddy, kiro, gemini)
 ├── overclock-cli/      # CLI entry point
 └── overclock-server/   # REST API (Phase 2)
 ```
