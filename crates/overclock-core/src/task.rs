@@ -9,18 +9,23 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use uuid::Uuid;
 
-/// Unique identifier for a task.
-pub type TaskId = Uuid;
-
-/// A structured requirement that the AI agent must collect evidence for
-/// before the task can be considered complete.
+/// Represents a requirement for validating the output of a task.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ValidationRequirement {
-    pub required: bool,
-    pub format: String,
+    /// Description of this requirement.
     pub description: String,
+    /// The shell command to run (e.g., `cargo test --doc`).
+    pub command: String,
+    /// Substrings that must be present in the output.
+    #[serde(default)]
     pub must_include: Vec<String>,
+    /// Substrings that must NOT be present in the output.
+    #[serde(default)]
+    pub must_not_include: Vec<String>,
 }
+
+/// Unique identifier for a task.
+pub type TaskId = Uuid;
 
 /// Result produced by a completed task.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -93,10 +98,10 @@ pub struct Task {
     pub extra_context: Vec<String>,
     /// When the task was created.
     pub created_at: DateTime<Utc>,
-    /// Structured evidence verification format requirements
+    /// Validation requirements that must pass for the task to be marked Completed.
     #[serde(default)]
     pub validation_requirements: Vec<ValidationRequirement>,
-    /// Array of completion criteria to be verified
+    /// Criteria describing what constitutes completion.
     #[serde(default)]
     pub completion_criteria: Vec<String>,
     /// Number of times the task has failed and been automatically retried (Harness feature).

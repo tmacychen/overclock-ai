@@ -21,3 +21,4 @@ pub mod role;
 pub mod task;
 pub mod telemetry;
 pub mod workflow;
+pub mod validation;

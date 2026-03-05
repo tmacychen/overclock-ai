@@ -16,3 +16,5 @@ templates/
 # Cargo.lock is usually committed for binaries, but we can keep it for now.
 # If you want to ignore it:
 # Cargo.lock
+
+.agents

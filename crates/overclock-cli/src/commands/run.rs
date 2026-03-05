@@ -87,51 +87,86 @@ async fn run_task(
 
         // Execute the task.
         match adapter.execute_task(&task, context, agent_config).await {
-            Ok(output) => {
+            Ok(mut output) => {
                 if output.success {
-                    let duration_ms = start_time.elapsed().as_millis() as u64;
-                    println!("✅ Task completed successfully! ({}ms)\n", duration_ms);
-                    println!("--- Agent Output ---");
-                    println!("{}", output.raw_output);
-                    println!("--- End Output ---\n");
+                    let mut validated = true;
+                    if !task.validation_requirements.is_empty() {
+                        println!("⏳ Agent reports completion. Verifying {} requirements...", task.validation_requirements.len());
+                        task.status = TaskStatus::Validating {
+                            agent_id: agent_id.clone(),
+                        };
+                        save_task(&task, workspace)?;
 
-                    // Save artifact to .overclock-ai/artifacts/
-                    let artifact_dir = workspace.join(CONTEXT_DIR).join("artifacts");
-                    std::fs::create_dir_all(&artifact_dir)?;
-                    let artifact_path = artifact_dir.join(format!("{}-output.md", task.id));
-                    std::fs::write(&artifact_path, &output.raw_output)?;
+                        match overclock_core::validation::ValidationEngine::validate(&task, workspace).await {
+                            Ok(res) => {
+                                if res.success {
+                                    println!("✅ Validation passed!");
+                                } else {
+                                    println!("❌ Validation failed!");
+                                    println!("{}", res.details);
+                                    validated = false;
+                                    
+                                    // Override output to simulate failure to feed back into retry loop
+                                    output.success = false;
+                                    output.summary = format!("Agent output was successful, but Evidence-Driven Validation failed:\n{}", res.details);
+                                }
+                            }
+                            Err(e) => {
+                                println!("⚠️  Failed to run validation engine: {e}");
+                                validated = false;
+                                output.success = false;
+                                output.summary = format!("Validation engine error: {e}");
+                            }
+                        }
+                    }
 
-                    sink.record(TelemetryEvent::TaskCompleted {
-                        task_id: task.id.to_string(),
-                        agent_handle: agent_id.clone(),
-                        duration_ms,
-                        context_size_bytes: context.to_prompt_context().len(),
-                    });
+                    if validated {
+                        let duration_ms = start_time.elapsed().as_millis() as u64;
+                        println!("✅ Task completed successfully! ({}ms)\n", duration_ms);
+                        println!("--- Agent Output ---");
+                        println!("{}", output.raw_output);
+                        println!("--- End Output ---\n");
 
-                    // Update task status.
-                    task.status = TaskStatus::Completed {
-                        completed_at: Utc::now(),
-                        result: TaskResult {
-                            summary: output.summary.clone(),
-                            modified_files: output.modified_files.clone(),
-                            artifacts: vec![artifact_path.clone()],
-                            raw_output: output.raw_output.clone(),
-                        },
-                    };
+                        // Save artifact to .overclock-ai/artifacts/
+                        let artifact_dir = workspace.join(CONTEXT_DIR).join("artifacts");
+                        std::fs::create_dir_all(&artifact_dir)?;
+                        let artifact_path = artifact_dir.join(format!("{}-output.md", task.id));
+                        std::fs::write(&artifact_path, &output.raw_output)?;
 
-                    // Update shared context with this task's result.
-                    context.add_task_result(TaskResultSummary {
-                        task_title: task.title.clone(),
-                        role: task.role.clone(),
-                        agent_id: agent_id.clone(),
-                        summary: output.summary,
-                        artifact_paths: vec![artifact_path],
-                        completed_at: Utc::now(),
-                    });
-                    context.save()?;
-                    save_task(&task, workspace)?;
-                    break;
-                } else {
+                        sink.record(TelemetryEvent::TaskCompleted {
+                            task_id: task.id.to_string(),
+                            agent_handle: agent_id.clone(),
+                            duration_ms,
+                            context_size_bytes: context.to_prompt_context().len(),
+                        });
+
+                        // Update task status.
+                        task.status = TaskStatus::Completed {
+                            completed_at: Utc::now(),
+                            result: TaskResult {
+                                summary: output.summary.clone(),
+                                modified_files: output.modified_files.clone(),
+                                artifacts: vec![artifact_path.clone()],
+                                raw_output: output.raw_output.clone(),
+                            },
+                        };
+
+                        // Update shared context with this task's result.
+                        context.add_task_result(TaskResultSummary {
+                            task_title: task.title.clone(),
+                            role: task.role.clone(),
+                            agent_id: agent_id.clone(),
+                            summary: output.summary,
+                            artifact_paths: vec![artifact_path],
+                            completed_at: Utc::now(),
+                        });
+                        context.save()?;
+                        save_task(&task, workspace)?;
+                        break;
+                    }
+                }
+                
+                if !output.success {
                     let duration_ms = start_time.elapsed().as_millis() as u64;
                     println!("❌ Task failed!\n");
                     println!("{}", output.summary);

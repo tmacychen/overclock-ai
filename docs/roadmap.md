@@ -26,8 +26,8 @@
 | 1.4 | Kiro CLI + Gemini CLI 适配器 | ✅ 已完成 |
 | 1.5 | CLI 命令行 (init, config, task, run, status) | ✅ 已完成 |
 | 1.6 | 上下文同步机制 | ✅ 基础完成 |
-| 1.7 | Agent Harness (证据驱动验证、重试控制、上下文压缩) | 🔲 待实现 |
-| 1.8 | Telemetry & Data Collection (失败分析与性能收集) | 🔲 待实现 |
+| 1.7 | Agent Harness (证据驱动验证、重试控制、上下文压缩) | � 进行中 |
+| 1.8 | Telemetry & Data Collection (失败分析与性能收集) | ✅ 已完成 |
 | 1.9 | TUI Monitor (终端实时监控) | 🔲 待实现 |
 | 1.10 | 集成测试 + 文档 | 🔲 待实现 |
 
