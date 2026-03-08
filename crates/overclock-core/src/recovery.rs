@@ -4,7 +4,7 @@
 //! dictates whether an automatic recovery attempt (e.g. retry, run init.sh)
 //! should be executed or if the task should be marked as blocked.
 
-use rand::Rng;
+
 use serde::{Deserialize, Serialize};
 
 /// Categories of errors an Agent CLI might produce.
@@ -130,8 +130,7 @@ pub fn calculate_exponential_backoff(attempt: u32, base_delay: u64, max_delay: u
     let delay = base_delay.saturating_mul(2_u64.saturating_pow(attempt));
     
     // Add some jitter (±20%) to avoid thundering herd
-    let mut rng = rand::thread_rng();
-    let jitter = (delay as f64 * 0.2 * (rng.gen_range(-0.5..0.5))) as i64;
+    let jitter = (delay as f64 * 0.2 * (rand::random::<f64>() - 0.5)) as i64;
     let delay_with_jitter = delay.saturating_add(jitter.abs() as u64);
     
     // Cap at max_delay

@@ -16,6 +16,7 @@
 pub mod config;
 pub mod context;
 pub mod event;
+pub mod harness;
 pub mod recovery;
 pub mod role;
 pub mod task;

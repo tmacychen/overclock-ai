@@ -22,3 +22,5 @@ clap = { workspace = true }
 chrono = { workspace = true }
 uuid = { workspace = true }
 anyhow = { workspace = true }
+ratatui = { version = "0.26.0", features = ["crossterm"] }
+crossterm = "0.26.1"

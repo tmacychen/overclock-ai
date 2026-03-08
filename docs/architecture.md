@@ -31,6 +31,7 @@ Overclock-AI 采用 **隔离式 Agent 编排** 模式：
 graph TB
     subgraph "User Layer"
         CLI["overclock-ai CLI<br/>(Phase 1)"]
+        TUIMonitor["TUI Monitor<br/>(Real-time)"]
         WebUI["Web Kanban UI<br/>(Phase 2)"]
         MobileApp["Mobile/Remote<br/>(Phase 3)"]
     end
@@ -70,6 +71,7 @@ graph TB
     Scheduler --> A1 & A2 & A3 & A4
     A1 & A2 & A3 & A4 --> EventBus
     EventBus --> TaskEngine
+    EventBus --> TUIMonitor
 ```
 
 ## 分层设计
@@ -110,7 +112,7 @@ pub trait AgentAdapter: Send + Sync {
 
 ### Layer 3: CLI (`overclock-cli`)
 
-基于 `clap` 的命令行接口，提供 `init`, `config`, `task`, `run`, `status` 命令。
+基于 `clap` 的命令行接口，提供 `init`, `config`, `task`, `run`, `status`, `monitor` 命令。其中 `monitor` 命令启动实时 TUI 监控界面，用于跟踪任务执行和系统事件。
 
 ### Layer 4: REST API Server (`overclock-server`)
 

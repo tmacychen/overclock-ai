@@ -55,6 +55,9 @@ enum Commands {
 
     /// Check the health status of all configured AI CLI agents.
     Status,
+
+    /// Start the TUI monitor for real-time task tracking.
+    Monitor,
 }
 
 #[derive(Subcommand)]
@@ -116,5 +119,6 @@ async fn main() -> Result<()> {
         },
         Commands::Run { target, workflow } => commands::run::run(target, workflow).await,
         Commands::Status => commands::status::run().await,
+        Commands::Monitor => commands::monitor::run_monitor().await,
     }
 }

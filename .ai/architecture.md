@@ -13,6 +13,7 @@
 | **REST API (Phase 2)** | Axum | 高性能的 Rust Web 框架 |
 | **Persistence** | 文件系统 JSON + SQLite (可选) | 简单可靠的持久化方案 |
 | **AI Adapters** | CodeBuddy, Kiro CLI, Gemini CLI | 多 AI 模型支持 |
+| **TUI Framework** | ratatui + crossterm | 实时终端监控界面 |
 
 ## Directory Structure
 
