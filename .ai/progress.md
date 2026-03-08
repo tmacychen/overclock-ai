@@ -13,19 +13,22 @@ This file tracks the overarching progress of the `overclock-ai` project, alignin
 - **F-HARNESS-07**: Complete Agent Harness implementation. Added evidence-driven validation, automated error recovery, and closed-loop data collection.
 - **F-HARNESS-08**: Integration tests. Added comprehensive integration tests for task execution, error classification, error recovery, and event bus functionality.
 - **F-HARNESS-09**: TUI Monitor enhancement. Added event filtering, event details view, keyboard navigation, and mouse support.
+- **F-SERVER-01**: REST API Server foundation. Implemented REST endpoints for task management and real-time event streaming using Axum.
 
 ## Current Focus
-- Prepare Phase 2: REST API Server foundation.
+- Prepare Phase 2: Web Kanban UI foundation.
+- Write comprehensive documentation and API guides.
 
 ## Next Steps
-- Implement REST API Server using Axum.
-- Write comprehensive documentation and usage guides.
+- Implement Web Kanban UI (React/Vue/Svelte).
+- Write detailed API documentation for REST endpoints.
 - Test end-to-end workflow with real AI agents.
-- Prepare Phase 2: Web Kanban UI foundation.
+- Enhance REST API with authentication and more endpoints.
+- Add comprehensive user documentation and usage guides.
 
 ## Project Roadmap Summary
 
-### Phase 1: CLI 编排核心 (当前)
+### Phase 1: CLI 编排核心 (已完成)
 
 #### 已完成
 - ✅ 1.1 项目脚手架 (Rust workspace)
@@ -39,19 +42,22 @@ This file tracks the overarching progress of the `overclock-ai` project, alignin
 - ✅ 1.9 TUI Monitor (终端实时监控)
 - ✅ 1.10 集成测试 + 文档
 - ✅ 1.11 依赖版本更新 (更新到最新稳定版本)
+- ✅ 1.12 TUI Monitor 增强 (鼠标支持、事件过滤、详细任务视图)
+
+### Phase 2: Web Kanban UI (当前)
+
+#### 已完成
+- ✅ 2.1 REST API Server 基础架构 (Axum + SSE)
 
 #### 进行中
-- 🔄 1.12 TUI Monitor 增强 (鼠标支持、事件过滤、详细任务视图)
+- 🔄 2.2 Web Kanban UI (React/Vue/Svelte)
+- 🔄 2.3 API 文档与用户指南
 
 #### 待实现
-- ⏳ Phase 2: REST API Server 基础架构
-
-### Phase 2: Web Kanban UI
-- Axum REST API 服务器
-- 前端看板 (React/Vue/Svelte — 待定)
-- SSE/WebSocket 实时更新
-- 角色配置 GUI
-- 任务看板拖拽
+- ⏳ 2.4 前端看板 (拖拽功能、实时更新)
+- ⏳ 2.5 角色配置 GUI
+- ⏳ 2.6 推送通知 (任务完成/失败)
+- ⏳ 2.7 SSE/WebSocket 实时更新
 
 ### Phase 3: Mobile / Remote
 - 移动端 Web App (PWA 或 React Native)

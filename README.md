@@ -12,6 +12,7 @@ Overclock-AI coordinates multiple AI CLI tools (CodeBuddy, Kiro CLI, Trae Agent,
 - **DAG workflow engine**: Design → Review → Develop → Test pipelines
 - **Extensible adapter system**: Add new AI CLI tools via plugin trait
 - **Real-time TUI monitor**: Interactive terminal interface for tracking task execution and system events
+- **REST API Server**: Phase 2 Web Kanban UI foundation with real-time event streaming
 
 ## Design Principle
 
@@ -57,6 +58,9 @@ overclock-ai run design-review-develop --workflow
 
 # Start the TUI monitor for real-time task tracking
 overclock-ai monitor
+
+# Start the REST API Server (Phase 2)
+overclock-ai server
 ```
 
 ## Configuration
